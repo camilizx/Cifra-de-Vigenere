@@ -16,10 +16,13 @@ string decode (string cript, string key);
 //string treatText (string text);
 
 void frequencies ();
-void print_map(multimap<int, string, greater<int>> MM);
+void print_multimap(multimap<int, string, greater<int>> MM);
+
 multimap<int, string, greater<int>> sort(map<string, int>& M);
-
-
 multimap<int, string, greater<int>> map_sort(map<string, int>& M);
-
 map<string, int> calculateFrequencies(string text, int blockSize);
+
+void keyLength (string cipher);
+
+map<int, int> calculateDivisors(vector<int> distances);
+int getMostFrequentDivisor(map<int, int> divisors);

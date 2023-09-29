@@ -11,7 +11,7 @@ map<string, int> calculateFrequencies(string text, int blockSize) {
                 clean_block = false;
                 //cout << "Block " << text.substr(i, blockSize) << " not considered" << endl;
             }
-        }    
+        }
         if (clean_block) {
             string block = text.substr(i, blockSize);
             if (frequency.find(block) != frequency.end()) {
@@ -64,13 +64,12 @@ map<int, int> calculateDivisors(vector<int> distances){
     map<int, int> divisors;
 
     for (int i=0; i < distances.size(); i++) {
-       for (int j = 2; j < distances[i]+1; j++) {
+        for (int j = 2; j < distances[i]+1; j++) {
            if (distances[i] % j == 0) {
                divisors[j] += 1;
            }
        }
     }
-
     return divisors;      
 }
 
@@ -89,50 +88,129 @@ int getMostFrequentDivisor(map<int, int> divisors) {
     return most_frequent_divisor;
 }
 
-// Essa funçao tenta descobrir o possível tamanho da chave
-void keyLength (string cipher) {
+int poundedDivisor (map<int,int> divisors, int most_frequent_divisor) {
+    map <int,int> pounded_divisors;
+    int new_most_frequent_divisor = 0;
 
-    cout << cipher << endl;
-    map<string, int> frequency_triples = calculateFrequencies(cipher, 3);
-    // Crie um novo mapa que irá conter os elementos de todos os mapas
-    map<string, int> combined_frequency;
-
-    // Copie os elementos do mapa frequency_triples para o combined_frequency
-    for (const auto& entry : frequency_triples) {
-        combined_frequency[entry.first] += entry.second;
-    }
-
-    
-    // Declare a multimap
-    multimap<int, string, greater<int>> sorted_frequency = sort(combined_frequency);
-
-    // Criar um novo map que recebe os top 10 elementos do multimap
-    map<string, int> top_10_map;
-
-    for (const auto& entry : sorted_frequency) {
-        top_10_map[entry.second] = entry.first;
-    }
-
-    /* Agora, top_10_map contém os top 10 elementos com maior frequência
-    for (const auto& entry : top_10_map) {
-        cout << entry.first << ": " << entry.second << endl;
-    }
-    */
-    vector<int> distances = calculateDistance(top_10_map, cipher);
-    /* print distances
-    for (int i = 0; i < distances.size(); i++) {
-        cout << distances[i] << endl;
-    }
-    */
-    map<int, int> divisors = calculateDivisors(distances);
-
-    // print divisors
+    // Pegar apenas os múltiplos do divisor mais frequente
     for (const auto& entry : divisors) {
-        cout << entry.first << " Aparece " << entry.second << " vezes" << endl;
+        int divisor = entry.first;
+        if (divisor % most_frequent_divisor == 0 && divisor < MAX_KEY_LEN) {
+            pounded_divisors[divisor] = entry.second;
+        }
+    }
+
+    // cout << "Pounded divisors: " << endl;
+    // for (const auto& entry : pounded_divisors) {
+    //     cout << entry.first << " Aparece " << entry.second << endl;
+    // }
+
+    //0.8 número mágico
+    for (int i = MAX_KEY_LEN; i > 0; i--) {
+        if (divisors[i] > divisors[most_frequent_divisor]*0.7) {
+            new_most_frequent_divisor = i;
+            break;
+        }
+    }
+
+    return new_most_frequent_divisor;
+}
+
+// Essa funçao tenta descobrir o possível tamanho da chave
+int keyLength (string cipher) {
+    map<string, int> frequency_triples = calculateFrequencies(cipher, 3);           // Calcula as frequencias dos grupos de 3 caracteres
+
+    multimap<int, string, greater<int>> sorted_frequency = sort(frequency_triples); // Ordena as frequencias em ordem decrescente
+
+    map<string, int> top_10_map;                                                    // Criar um novo map que recebe os top 10 elementos do multimap
+
+    int count = 0;
+    for (const auto& entry : sorted_frequency) {
+        if (count < 10) {
+            top_10_map[entry.second] = entry.first;
+            count++;
+        }
+    }
+
+    //Agora, top_10_map contém os top 10 elementos com maior frequência
+    // for (const auto& entry : top_10_map) {
+    //     cout << entry.first << ": " << entry.second << endl;
+    // }
+    
+    vector<int> distances = calculateDistance(top_10_map, cipher);
+    
+    map<int, int> divisors = calculateDivisors(distances);
+    // print divisors
+    //map<int,int> pounded_divisors;
+
+    //print distances
+    // for (int i = 0; i < distances.size(); i++) {
+    //     cout << distances[i] << endl;
+    // }
+
+    //Print quantidade de vezes que os divisores das distancias aparecem
+    for (const auto& entry : divisors) {
+        cout << entry.first << " Aparece " << entry.second << endl;
     }
 
     int most_frequent_divisor = getMostFrequentDivisor(divisors);
     
+    most_frequent_divisor = poundedDivisor(divisors, most_frequent_divisor);
+
     cout << "Possible key length: " << most_frequent_divisor << endl;
 
+    return most_frequent_divisor;
+}
+
+//Funcao que divide a cifra em varias partes n (tamanho da chave).
+//ABCDEFGHIJ, key_length = 3
+//divided_cipher = ADGJ, BEH, CFI
+vector<string> divideCipher(string cipher, int key_length) {
+    vector<string> divided_cipher;
+    for (int i = 0; i < key_length; i++) {
+        string block = "";
+        for (int j = i; j < cipher.length(); j+=key_length) {
+            block += cipher[j];
+        }
+        divided_cipher.push_back(block);
+    }
+    return divided_cipher;
+}
+
+// Função que calcula as frequencias das letras que aparecem no texto cifrado
+map<char, float> calculateLetterFrequencies(string text) {
+    map<char, float> letter_frequencies;
+    for (int i = 0; i < text.length(); i++) {
+        if (letter_frequencies.find(text[i]) != letter_frequencies.end()) {
+            letter_frequencies[text[i]] += 1;
+        } else {
+            letter_frequencies[text[i]] = 1;
+        }
+    }
+    for (const auto& entry : letter_frequencies) {
+        letter_frequencies[entry.first] = (entry.second / text.length())*100;
+    }
+    // se não tiver a letra no texto, a frequencia é 0
+    for (int i = 0; i < 26; i++) {
+        if (letter_frequencies.find('a'+i) == letter_frequencies.end()) {
+            letter_frequencies['a'+i] = 0;
+        }
+    }
+
+    return letter_frequencies;
+}
+
+//Funcao que calcula a diferenca entre as frequencias das letras do texto cifrado e as frequencias das letras em portugues
+char keyGuess (map<char,float> cipher_letter_frequencies) {
+    vector<float> differences;
+    
+    for (int i = 0; i < 26; i++) {
+        map<char,float> cipher_shifted = shiftValues(cipher_letter_frequencies, i);
+        float difference = diff(cipher_shifted, portuguese_letter_frequencies);
+        //cout << "Diferenca " << char('a'+ i) << ": " << difference << endl;
+        differences.push_back(difference);
+    }
+    // find the index of the minimum element
+    int min_index = min_element(differences.begin(), differences.end()) - differences.begin();
+    return char('a' + min_index);
 }

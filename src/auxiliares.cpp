@@ -60,6 +60,39 @@ void frequencies () {
     portuguese_letter_frequencies['z'] = 0.47;
 }
 
+// Funcao que remove os caracteres especiais e deixa apenas letras minusculas
+string cleanText (string text) {
+    string newText;
+    for (int i = 0; i < text.size(); i++) {
+        if (isalpha(text[i]) != 0) {
+            newText += tolower(text[i]);
+        }
+    }
+    return newText;
+}
+
+// Le arquivo e salva numa string
+string readFile(string fileName) {
+    ifstream inputFile(fileName);
+
+    if (!inputFile.is_open()) {
+        cerr << "Erro ao abrir o arquivo." << endl;
+        return ""; // Ou outra ação de tratamento de erro apropriada.
+    }
+
+    string content;
+    string line;
+    while (getline(inputFile, line)) {
+        content += line + "\n"; // Concatenar cada linha ao conteúdo.
+    }
+
+    inputFile.close();
+
+    return content;
+}
+
+
+
 void print_multimap(multimap<int, string, greater<int>> MM) {
     for (auto& it : MM) {
         cout << it.second << ' ' << it.first << endl;
@@ -116,6 +149,7 @@ map<char, float> shiftValues(map<char, float> original, int deslocamento) {
     }
     return newMap;
 }
+
 
 
 

@@ -4,6 +4,7 @@
 #include <vector>
 #include <map>
 #include <algorithm>
+#include <fstream>
 
 #define MAX_KEY_LEN 30
 
@@ -34,4 +35,9 @@ map<char, float> calculateLetterFrequencies(string text);
 float diff(map<char, float> M1, map<char, float> M2);
 map<char, float> shiftValues(map<char, float> original, int deslocamento);
 
-char keyGuess (map<char,float> cipher_letter_frequencies);
+char keyGuess (map<char,float> cipher_letter_frequencies, int language);
+
+string attack (string cipher, int language);
+
+string cleanText (string text);
+string readFile (string fileName);

@@ -1,45 +1,62 @@
-#include "enc-dec.hpp"
+#include "./src/enc-dec.hpp"
 
 using namespace std;
 
 int main () {
+    int op, language;
+    string text, cipher, key;
 
-    frequencies();
+    while (true) {
+        text = readFile("plaintext.txt");
+        cipher = readFile("ciphertext.txt");
+        key = readFile("key.txt");
 
-    int blockSize = 3;
-    
-    string key = "xycabacadabrastardewvalley";
-    string text = "Minha viagem para Sao Paulo para assistir ao show do Ghost em 21/09/2023 com nossos amigos foi simplesmente incrivel!" 
-                  " Foi uma experiencia que guardarei com carinho na memoria por muitos anos. A empolgacao comecou muito antes do dia da viagem."
-                  " Planejamos tudo nos minimos detalhes, desde a compra dos ingressos ate a escolha do hotel."
-                  " Parecia que estavamos preparando uma aventura epica, e a ansiedade so aumentava a medida que a data se aproximava." 
-                  " Finalmente, o grande dia chegou. Nos reunimos no aeroporto com nossos amigos, todos com camisetas da banda e aquele" 
-                  " brilho nos olhos que so os fas de musica entendem."
-                  " O show em si foi simplesmente espetacular. O Ghost nao decepcionou, entregando uma performance cheia de energia, efeitos" 
-                  " visuais deslumbrantes, e claro, suas musicas incriveis."
-                  " Cantamos, dancamos e nos emocionamos juntos, compartilhando esse momento especial com nossos amigos."
-                  " Depois do show, voltamos ao hotel, exaustos, mas com sorrisos enormes nos rostos. Passamos horas relembrando os melhores momentos da noite, "
-                  " compartilhando nossas musicas favoritas e planejando nossa proxima aventura musical.";          
-    
-    //string format_text = "minhaviagemparsaopauloassistiraoshowdoghostemcomnossosamigosfoisimplesmenteincrivelfoiumaexperienciaqueguardareicomcarinhonamemoriapormuitosanosaempolgacaocomecoumuitoantesdodiadaviagemplanejamostudonosminimosdetalhesdesdeacompradosingressosateaescolhadohotelpareciaqueestavamospreparandoumaaventuraepicaeaansiedadesoaumentavamedidaquedataseaproximavafinalmenteograndediachegounosreunimosnoaeroportocomnossosamigostodoscomcamisetasdabandaeaquelebrilhonosolhosquesoosfasdemusicaentendemoshowemsifoisimplesmenteespetacularogostnaodecepcionouentregandoumaperformancecheiadeenergiaefeitosvisuaisdeslumbranteseclarosuasmusicasincriveiscantamosdancamosenosemocionamosjuntoscompartilhandoessemomentoespecialcomnossosamigosdepoisdoshowvoltamosaohotelexaustosmascomsorrisosenormesnosrostospassamoshorasrelembrandoosmelhoresmomentosdanochecompartilhandonossasmusicasfavoritaseplanejandonossaproximaaventuramusicaleugosteimuitodoshowsdoghostporquefoimuitolegaleuadorei";
-    string format_text = "minhaviagemparsaopauloassistiraoshowdoghostemcomnossosamigosfoisimplesmenteincrivelfoiumaexperienciaqueguardareicomcarinhonamemoriapormuitosanosaempolgacaocomecoumuitoantesdodiadaviagemplanejamostudonosminimosdetalhesdesdeacompradosingressosateaescolhadohotelpareciaqueestavamospreparandoumaaventuraepicaeaansiedadesoaumentavamedidaquedataseaproximavafinalmenteograndediachegounosreunimosnoaeroportocomnossosamigostodoscomcamisetasdabandaeaquelebrilhonosolhosquesoosfasdemusicaentendemoshowemsifoisimplesmenteespetacularogostnaodecepcionouentregandoumaperformancecheiadeenergiaefeitosvisuaisdeslumbranteseclarosuasmusicasincriveiscantamosdancamosenosemocionamosjuntoscompartilh";
+        cout << "IMPORTANTE: Verifique se os arquivos txt estao preenchidos com o texto/cifra e a chave!" << endl;
+        cout << "Digite o numero da operacao que deseja realizar" << endl;
+        cout << "1 - Cifrar" << endl;
+        cout << "2 - Decifrar" << endl;
+        cout << "3 - Ataque" << endl;
+        cin >> op;
 
+        switch (op) {
+        case 1:
+            cout << "Texto a ser cifrado: " << endl;
+            cout << text << endl;
+            cout << "Chave utilizada: " << endl;
+            cout << key << endl;
+            cipher = encode(text, key);
+            cout << "Texto cifrado: " << endl << cipher << endl;
+            break;
+        case 2:
+            cout << "Texto a ser decifrado: " << endl;
+            cout << cipher << endl;
+            cout << "Chave utilizada: " << endl;
+            cout << key << endl;
+            text = decode(cipher, key);
+            cout << "Texto decifrado: " << endl << text << endl;
+            break;
+        case 3:
+            cout << "Texto a ser decifrado: " << endl;
+            cout << cipher << endl;
+            cout << "Defina o idioma do texto: " << endl;
+            cout << "1 - Portugues" << endl;
+            cout << "2 - Ingles" << endl;
+            cin >> language;
+            cout << "A sua chave sera descoberta e o texto revelado *o*" << endl;
+            string discovered_key = attack(cipher, language);
+            cout << "Chave Descoberta: " << endl << discovered_key << endl;
+            text = decode(cipher, discovered_key);
+            cout << "Texto decifrado: " << endl << text << endl;
+            break;
+        }
+        cout << "Deseja realizar outra operacao? (1 - Sim, 0 - Nao)" << endl;
+        cin >> op;
 
-    string cipher = encode(format_text, key);
-    cout << "Cifra: " << endl << cipher << endl;
-
-    int key_length = keyLength(cipher);
-
-    vector<string> teste = divideCipher(cipher, key_length);
-
-    // Isso aqui vai ser um for que vai rodar 3 vezes (tamanho da chave)
-    string guessed_key = "";
-    for (int i = 0; i < key_length; i++) {
-        map<char, float> letter_freq = calculateLetterFrequencies(teste[i]);
-        guessed_key += keyGuess(letter_freq);
+        if (op == 0) {
+            cout<< "Adeus!" << endl;
+            break;
+        }
     }
-
-    cout << "A chave eh: " << guessed_key << endl;
-
+    
    return 0;
 }

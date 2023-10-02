@@ -36,19 +36,19 @@ map<char, float> calculateLetterFrequencies(string text) {
 
 //Funcao que calcula a diferenca entre as frequencias das letras do texto cifrado e as frequencias das letras em portugues
 char keyGuessLetter (map<char,float> cipher_letter_frequencies, int language) {
-    vector<float> differences;                                                              // armazena diferencas entre as frequencias das letras do texto cifrado e as frequencias das letras em portugues
+    vector<float> differences;                                                                    // armazena diferencas entre as frequencias das letras do texto cifrado e as frequencias das letras em portugues
     map <char,float> default_letter_frequencies;                                            
 
-    if (language == 1) default_letter_frequencies = portuguese_letter_frequencies;          // define as frequencias das letras do idioma
+    if (language == 1) default_letter_frequencies = portuguese_letter_frequencies;               // define as frequencias das letras do idioma
     else if (language == 2) default_letter_frequencies = english_letter_frequencies;
     
-    for (int i = 0; i < 26; i++) {                                                          // faz o shift das frequencias das letras do texto cifrado e calcula a diferenca entre as frequencias
-        map<char,float> cipher_shifted = shiftValues(cipher_letter_frequencies, i);         // faz o shift das frequencias das letras do texto cifrado
-        float difference = diff(cipher_shifted, default_letter_frequencies);                // calcula a diferenca entre as frequencias
-        differences.push_back(difference);                                                 // armazena a diferenca
+    for (int i = 0; i < 26; i++) {                                                               // faz o shift das frequencias das letras do texto cifrado e calcula a diferenca entre as frequencias
+        map<char,float> cipher_shifted = shiftValues(cipher_letter_frequencies, i);              // faz o shift das frequencias das letras do texto cifrado
+        float difference = diff(cipher_shifted, default_letter_frequencies);                     // calcula a diferenca entre as frequencias
+        differences.push_back(difference);                                                       // armazena a diferenca
     }
     int min_index = min_element(differences.begin(), differences.end()) - differences.begin();  // acha o indice do menor valor no vetor de diferencas
-    return char('a' + min_index);                                                               // Retorna a letra correspondente
+    return char('a' + min_index);                                                              // Retorna a letra correspondente
 }
 
 // Funcao que encontra a chave do texto cifrado

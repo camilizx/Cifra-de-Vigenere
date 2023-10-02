@@ -1,4 +1,12 @@
-#include "./src/enc-dec.hpp"
+/*
+        Universidade de Brasilia - Departamento de Ciencia da Computacao
+        Seguranca Computacional 2023/02 - Turma T02
+        Alunos: Camila Frealdo Fraga - 17/0007561
+                Jose Roberto Interaminense Soares - 19/0130008
+*/
+
+
+#include "./src/headers.hpp"
 
 using namespace std;
 
@@ -11,8 +19,8 @@ int main () {
         cipher = readFile("ciphertext.txt");
         key = readFile("key.txt");
 
-        cout << "IMPORTANTE: Verifique se os arquivos txt estao preenchidos com o texto/cifra e a chave!" << endl;
-        cout << "Digite o numero da operacao que deseja realizar" << endl;
+        cout << endl << "IMPORTANTE: Se voce deseja realizar as operacoes 1 ou 2, verifique se os arquivos txt estao preenchidos com o texto/cifra e a chave!" << endl;
+        cout << endl << "Digite o numero da operacao que deseja realizar: " << endl;
         cout << "1 - Cifrar" << endl;
         cout << "2 - Decifrar" << endl;
         cout << "3 - Ataque" << endl;
@@ -42,11 +50,11 @@ int main () {
             cout << "1 - Portugues" << endl;
             cout << "2 - Ingles" << endl;
             cin >> language;
-            cout << "A sua chave sera descoberta e o texto revelado *o*" << endl;
+            cout << endl << "A SUA CHAVE SERA DESCOBERTA E O TEXTO REVELADO *O*" << "\n\n";
             string discovered_key = attack(cipher, language);
-            cout << "Chave Descoberta: " << endl << discovered_key << endl;
+            cout << endl << "Chave descoberta: " << endl << discovered_key << endl;
             text = decode(cipher, discovered_key);
-            cout << "Texto decifrado: " << endl << text << endl;
+            cout << endl << "Texto revelado: " << endl << text << endl;
             break;
         }
         cout << "Deseja realizar outra operacao? (1 - Sim, 0 - Nao)" << endl;

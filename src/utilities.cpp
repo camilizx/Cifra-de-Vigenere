@@ -1,4 +1,4 @@
-#include "enc-dec.hpp"
+#include "headers.hpp"
 
 map<char, float> english_letter_frequencies;
 map<char, float> portuguese_letter_frequencies;
@@ -91,8 +91,6 @@ string readFile(string fileName) {
     return content;
 }
 
-
-
 void print_multimap(multimap<int, string, greater<int>> MM) {
     for (auto& it : MM) {
         cout << it.second << ' ' << it.first << endl;
@@ -115,8 +113,7 @@ multimap<int, string, greater<int>> sort(map<string, int>& M) {
     return MM;
 }
 
-// Funcao que faz a diferenca entre dois maps de char, float e retorna
-// a soma das diferencas absolutas de cada letra
+// Funcao que faz a diferenca entre dois maps de char, float e retorna a soma das diferencas absolutas de cada letra
 float diff(map<char, float> M1, map<char, float> M2) {
     float sum = 0;
     for (auto& it : M1) {
@@ -150,6 +147,26 @@ map<char, float> shiftValues(map<char, float> original, int deslocamento) {
     return newMap;
 }
 
+string isPasswordRepeatedWords(const string& password) {
+    int passwordLength = password.length();
 
+    // Percorre todos os possíveis divisores do tamanho da senha
+    for (int divisor = 1; divisor <= passwordLength / 2; divisor++) {
+        // Verifica se o tamanho da senha é divisível pelo divisor atual
+        if (passwordLength % divisor == 0) {
+            string candidate = password.substr(0, divisor);
+            string repeatedPassword;
 
+            // Cria uma senha repetida com base no divisor
+            for (int i = 0; i < passwordLength / divisor; i++) {
+                repeatedPassword += candidate;
+            }
 
+            // Compara a senha repetida com a senha original
+            if (repeatedPassword == password) {
+                return candidate;
+            }
+        }
+    }
+    return "";
+}
